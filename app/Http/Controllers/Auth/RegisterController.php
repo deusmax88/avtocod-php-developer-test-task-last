@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -28,7 +30,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/register-success';
 
     /**
      * Create a new controller instance.
@@ -41,6 +43,40 @@ class RegisterController extends Controller
     }
 
     /**
+     * Отображение формы регистрации
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showRegistrationForm()
+    {
+        return view('register');
+    }
+
+    /**
+     * Отображение сообщения об успешной регистрации
+     */
+    public function successfulRegistration()
+    {
+        return view('register-success');
+    }
+
+    /**
+     * Процедура регистрации
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -49,9 +85,19 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'name' => 'required|string|min:8|max:255|alpha_num|unique:users',
+            'password' => [ 'required',
+                'string',
+                'min:6',
+                'confirmed',
+                function($attribute, $value, $fail) {
+                    if (!(preg_match('/[A-Z]/', $value)
+                        && preg_match('/[a-z]/', $value)
+                        && preg_match('/[0-9]/', $value))) {
+                        $fail($attribute.' is invalid');
+                    }
+                }
+            ],
         ]);
     }
 
@@ -66,7 +112,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'name' => $data['name'],
-            'email' => $data['email'],
+            'email' => $data['email'] ?? null,
             'password' => Hash::make($data['password']),
         ]);
     }

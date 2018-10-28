@@ -12,6 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        factory(User::class)->times(\mt_rand(1, 5))->create();
+        factory(\App\Message::class, 30)->create();
     }
 }
