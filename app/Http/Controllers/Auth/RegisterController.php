@@ -91,9 +91,7 @@ class RegisterController extends Controller
                 'min:6',
                 'confirmed',
                 function($attribute, $value, $fail) {
-                    if (!(preg_match('/[A-Z]/', $value)
-                        && preg_match('/[a-z]/', $value)
-                        && preg_match('/[0-9]/', $value))) {
+                    if (!(preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/', $value))) {
                         $fail($attribute.' is invalid');
                     }
                 }

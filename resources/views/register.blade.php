@@ -58,10 +58,7 @@
 
             <label for="user_login" class="sr-only">Логин</label>
             <input type="text" name="name" value="{{ old('name') }}" id="user_login" class="form-control"  placeholder="Логин" required autofocus>
-            {{--
-            <label for="user_email" class="sr-only">Email</label>
-            <input type="text" name="email" value="{{ old('email') }}" id="user_email" class="form-control"  placeholder="Email" required autofocus>
-            --}}
+
             <label for="user_password" class="sr-only">Пароль</label>
             <input type="password" name="password" value="{{ old('password') }}" id="user_password" class="form-control" placeholder="Пароль" required>
 

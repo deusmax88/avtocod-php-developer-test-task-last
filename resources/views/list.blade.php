@@ -27,7 +27,7 @@
         </div>
 
         @auth
-        <form method="post" class="form-horizontal">
+        <form method="post" class="form-horizontal" id="publishNewMessageForm">
             @if($errors->any())
             <div class="alert alert-danger alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
